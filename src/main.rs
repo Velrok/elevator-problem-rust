@@ -2,6 +2,7 @@
 //
 use std::fmt;
 
+#[derive(Copy, Clone)]
 pub enum Direction {
     Up,
     Down,
@@ -10,6 +11,7 @@ pub enum Direction {
 
 type Floor = usize;
 
+#[derive(Copy, Clone)]
 pub struct TravelRequest {
     origin: Floor,
     direction: Direction,
@@ -38,7 +40,40 @@ pub struct Elevator {
 
 impl Elevator {
     fn step(&mut self) {
-        self.r#move()
+        if self.floor_backlog.contains(&self.current_floor) {
+            self.open_doors()
+        } else {
+            self.r#move()
+        }
+    }
+
+    fn open_doors(&mut self) {
+        // remove current floor from backlog
+        self.floor_backlog = self
+            .floor_backlog
+            .iter()
+            .filter(|&&floor| floor != self.current_floor)
+            .map(|f| *f)
+            .collect();
+
+        let mut requests = self.requests.clone();
+
+        // get list of requests that enter the elevator at this point
+        let passengers: Vec<_> = requests
+            .iter()
+            .filter(|r| r.origin == self.current_floor)
+            .collect();
+
+        // new passengers press their destination buttons, its only now that we knwo where they
+        // want to go.
+        for p in passengers {
+            self.floor_backlog.push(p.destination);
+        }
+
+        // we can now remove all new passengers from the requests as they are already part of the
+        // backlog and when the doors open they will be able to exit.
+        requests.retain(|r| r.origin != self.current_floor);
+        self.requests = requests;
     }
 
     fn r#move(&mut self) {
