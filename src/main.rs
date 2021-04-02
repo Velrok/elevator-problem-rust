@@ -32,7 +32,8 @@ pub struct Elevator {
     max_floor: Floor,
     current_floor: Floor,
     direction: Direction,
-    floor_requests: Vec<Floor>,
+    floor_backlog: Vec<Floor>,
+    requests: Vec<TravelRequest>,
 }
 
 impl Elevator {
@@ -59,20 +60,35 @@ impl Elevator {
             }
         }
     }
+
+    fn add_request(&mut self, t: TravelRequest) {
+        self.floor_backlog.push(t.origin);
+        self.requests.push(t);
+    }
 }
 
 impl fmt::Display for Elevator {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // ▲ ▼ ▮
-        writeln!(f, "---")?;
+        writeln!(f, "-----")?;
         for i in (0..(self.max_floor + 1)).rev() {
+            write!(f, "{} ", i)?;
+
             if i == self.current_floor {
-                writeln!(f, "{}▮", self.direction)?;
+                write!(f, "{}▮", self.direction)?;
             } else {
-                writeln!(f, " |")?;
+                write!(f, " |")?;
             }
+
+            if self.floor_backlog.contains(&i) {
+                write!(f, "!")?;
+            } else {
+                write!(f, " ")?;
+            }
+
+            writeln!(f, "")?;
         }
-        writeln!(f, "---")
+        writeln!(f, "-----")
     }
 }
 
@@ -82,8 +98,15 @@ fn main() {
         max_floor: 3,
         current_floor: 0,
         direction: Direction::Up,
-        floor_requests: vec![],
+        floor_backlog: vec![],
+        requests: vec![],
     };
+
+    e.add_request(TravelRequest {
+        origin: 2,
+        direction: Direction::Down,
+        destination: 0,
+    });
 
     println!("The elevator Problem:");
 
