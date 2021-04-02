@@ -38,12 +38,17 @@ pub struct Elevator {
     requests: Vec<TravelRequest>,
 }
 
+trait DirectionStrategy {
+    fn new_direction(&self, e: &Elevator) -> Direction;
+}
+
 impl Elevator {
-    fn step(&mut self) {
+    fn step<T: DirectionStrategy>(&mut self, s: T) {
+        self.direction = s.new_direction(&self);
         if self.floor_backlog.contains(&self.current_floor) {
-            self.open_doors()
+            self.open_doors();
         } else {
-            self.r#move()
+            self.r#move();
         }
     }
 
@@ -129,6 +134,13 @@ impl fmt::Display for Elevator {
     }
 }
 
+struct AlwaysDown;
+impl DirectionStrategy for AlwaysDown {
+    fn new_direction(&self, e: &Elevator) -> Direction {
+        Direction::Down
+    }
+}
+
 fn main() {
     let mut e = Elevator {
         min_floor: 0,
@@ -150,6 +162,6 @@ fn main() {
     for i in 0..5 {
         println!("Step {}", i);
         println!("{}", e);
-        e.step();
+        e.step(AlwaysDown);
     }
 }
