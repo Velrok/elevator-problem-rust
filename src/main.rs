@@ -70,25 +70,27 @@ impl Elevator {
 impl fmt::Display for Elevator {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // ▲ ▼ ▮
-        writeln!(f, "-----")?;
+        writeln!(f, "-----")?; // top line
         for i in (0..(self.max_floor + 1)).rev() {
+            // render floor no
             write!(f, "{} ", i)?;
 
+            // render carriage
             if i == self.current_floor {
                 write!(f, "{}▮", self.direction)?;
             } else {
                 write!(f, " |")?;
             }
 
+            // render requests
             if self.floor_backlog.contains(&i) {
                 write!(f, "!")?;
-            } else {
-                write!(f, " ")?;
             }
 
+            // finish with new line
             writeln!(f, "")?;
         }
-        writeln!(f, "-----")
+        writeln!(f, "-----") // bottom line
     }
 }
 
