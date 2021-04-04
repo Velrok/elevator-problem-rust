@@ -29,13 +29,21 @@ impl fmt::Display for Direction {
     }
 }
 
+#[derive(Copy, Clone)]
+struct Job {
+    travel_request: TravelRequest,
+    start: usize,
+}
+
 pub struct Elevator {
     min_floor: Floor,
     max_floor: Floor,
     current_floor: Floor,
     direction: Direction,
     floor_backlog: Vec<Floor>,
-    requests: Vec<TravelRequest>,
+    jobs: Vec<Job>,
+    time: usize,
+    wait_times: Vec<usize>,
 }
 
 trait DirectionStrategy {
@@ -43,13 +51,22 @@ trait DirectionStrategy {
 }
 
 impl Elevator {
+    fn is_busy(&self) -> bool {
+        !self.floor_backlog.is_empty()
+    }
+
     fn step<T: DirectionStrategy>(&mut self, s: T) {
+        self.progress_time();
         self.direction = s.new_direction(&self);
         if self.floor_backlog.contains(&self.current_floor) {
             self.open_doors();
         } else {
             self.r#move();
         }
+    }
+
+    fn progress_time(&mut self) {
+        self.time += 1;
     }
 
     fn open_doors(&mut self) {
@@ -61,24 +78,25 @@ impl Elevator {
             .map(|f| *f)
             .collect();
 
-        let mut requests = self.requests.clone();
-
-        // get list of requests that enter the elevator at this point
-        let passengers: Vec<_> = requests
-            .iter()
-            .filter(|r| r.origin == self.current_floor)
-            .collect();
-
-        // new passengers press their destination buttons, its only now that we knwo where they
-        // want to go.
-        for p in passengers {
-            self.floor_backlog.push(p.destination);
+        // job enters the elevator
+        for job in &self.jobs {
+            if job.travel_request.origin == self.current_floor {
+                self.floor_backlog.push(job.travel_request.destination);
+            }
         }
 
-        // we can now remove all new passengers from the requests as they are already part of the
-        // backlog and when the doors open they will be able to exit.
-        requests.retain(|r| r.origin != self.current_floor);
-        self.requests = requests;
+        // record completed job wait times
+        for job in &self.jobs {
+            if job.travel_request.destination == self.current_floor {
+                let wait = self.time - job.start;
+                self.wait_times.push(wait);
+            }
+        }
+
+        // remove completed jobs
+        let mut jobs = self.jobs.clone();
+        jobs.retain(|j| j.travel_request.destination != self.current_floor);
+        self.jobs = jobs;
     }
 
     fn r#move(&mut self) {
@@ -103,13 +121,17 @@ impl Elevator {
 
     fn add_request(&mut self, t: TravelRequest) {
         self.floor_backlog.push(t.origin);
-        self.requests.push(t);
+        self.jobs.push(Job {
+            travel_request: t,
+            start: self.time,
+        });
     }
 }
 
 impl fmt::Display for Elevator {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // ▲ ▼ ▮
+        writeln!(f, "T: {}", self.time)?; // top line
         writeln!(f, "-----")?; // top line
         for i in (0..(self.max_floor + 1)).rev() {
             // render floor no
@@ -136,7 +158,7 @@ impl fmt::Display for Elevator {
 
 struct AlwaysDown;
 impl DirectionStrategy for AlwaysDown {
-    fn new_direction(&self, e: &Elevator) -> Direction {
+    fn new_direction(&self, _: &Elevator) -> Direction {
         Direction::Down
     }
 }
@@ -145,23 +167,49 @@ fn main() {
     let mut e = Elevator {
         min_floor: 0,
         max_floor: 3,
-        current_floor: 0,
+        current_floor: 3,
         direction: Direction::Up,
         floor_backlog: vec![],
-        requests: vec![],
+        jobs: vec![],
+        time: 0,
+        wait_times: vec![],
     };
 
     e.add_request(TravelRequest {
-        origin: 2,
+        origin: 3,
         direction: Direction::Down,
         destination: 0,
     });
 
     println!("The elevator Problem:");
 
-    for i in 0..5 {
-        println!("Step {}", i);
-        println!("{}", e);
+    println!("{}", e);
+    let mut t = 0;
+    while e.is_busy() {
+        match t {
+            1 => e.add_request(TravelRequest {
+                origin: 2,
+                direction: Direction::Down,
+                destination: 0,
+            }),
+            2 => {
+                e.add_request(TravelRequest {
+                    origin: 1,
+                    direction: Direction::Down,
+                    destination: 0,
+                });
+            }
+            _ => {}
+        }
         e.step(AlwaysDown);
+        println!("{}", e);
+        t += 1;
+        if t > 1000000 {
+            println!("Engaging failsafe after {} steps.", t);
+            break;
+        }
     }
+
+    println!("Wait times:");
+    println!("{:?}", e.wait_times);
 }
