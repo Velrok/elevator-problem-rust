@@ -21,6 +21,7 @@ fn main() {
 
     let wait_score = wait_times.iter().map(|&x| x as i32).sum::<i32>();
     let backlog_score = backlog as i32 * 10;
+
     println!("Score lower is better: {:?}", wait_score + backlog_score);
     println!("-------------------------------");
     println!("Wait times score: {:?}", wait_score);
