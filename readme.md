@@ -12,7 +12,7 @@ elevator should go up or down, whilst minimising some sort of reward function.
 - [x] model passengers setting a destination
 - [x] simulate a few steps for one elevator
 - [x] model passengers exiting
-- [ ] measure passenger travel time in steps
+- [x] measure passenger travel time in steps
 - [ ] generate travel request for different scenarios
 - [ ] write different strategies
 - [ ] evaluate them based on minimisation of avg travel time
