@@ -45,7 +45,7 @@ pub struct Elevator {
 }
 
 pub trait DirectionStrategy {
-    fn new_direction(&self, e: &Elevator) -> Direction;
+    fn new_direction(e: &Elevator) -> Direction;
 }
 
 impl Elevator {
@@ -66,9 +66,9 @@ impl Elevator {
         !self.floor_backlog.is_empty()
     }
 
-    pub fn step<T: DirectionStrategy>(&mut self, s: T) {
+    pub fn step<T: DirectionStrategy>(&mut self) {
         self.progress_time();
-        self.direction = s.new_direction(&self);
+        self.direction = T::new_direction(&self);
         if self.floor_backlog.contains(&self.current_floor) {
             self.open_doors();
         } else {

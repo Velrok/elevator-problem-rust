@@ -1,4 +1,4 @@
-use crate::elevator::{Direction, Elevator, TravelRequest};
+use crate::elevator::{Direction, DirectionStrategy, Elevator, TravelRequest};
 use crate::strategies::AlwaysDown;
 
 pub struct ResidentialFlats {
@@ -18,7 +18,7 @@ impl ResidentialFlats {
         self.print_states = true;
     }
 
-    pub fn run(&self) -> (Vec<usize>, usize) {
+    pub fn run<T: DirectionStrategy>(&self) -> (Vec<usize>, usize) {
         let mut e = Elevator::new(0, 3, 3);
 
         for t in 0..self.steps {
@@ -28,7 +28,7 @@ impl ResidentialFlats {
             if self.print_states {
                 println!("{}", e);
             }
-            e.step(AlwaysDown);
+            e.step::<T>();
         }
 
         let back_l = e.backlog();

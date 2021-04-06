@@ -2,6 +2,7 @@
 mod elevator;
 mod simulations;
 mod strategies;
+use crate::strategies::AlwaysDown;
 
 use simulations::ResidentialFlats;
 
@@ -11,7 +12,7 @@ fn main() {
     println!("Simulating a residential flats building.");
     let mut sim = ResidentialFlats::new(10);
     sim.enable_debug();
-    let (wait_times, backlog) = sim.run();
+    let (wait_times, backlog) = sim.run::<AlwaysDown>();
 
     println!("Wait times: {:?}", wait_times);
 
