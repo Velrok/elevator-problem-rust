@@ -137,6 +137,10 @@ impl Elevator {
             start: self.time,
         });
     }
+
+    pub fn backlog(&self) -> usize {
+        self.jobs.len()
+    }
 }
 
 impl fmt::Display for Elevator {
