@@ -8,6 +8,7 @@ pub enum Direction {
 }
 
 type Floor = usize;
+type Time = usize;
 
 #[derive(Copy, Clone)]
 pub struct TravelRequest {
@@ -30,7 +31,7 @@ impl fmt::Display for Direction {
 #[derive(Copy, Clone)]
 struct Job {
     travel_request: TravelRequest,
-    start: usize,
+    start: Time,
 }
 
 pub struct Elevator {
@@ -40,8 +41,8 @@ pub struct Elevator {
     pub direction: Direction,
     pub floor_backlog: Vec<Floor>,
     jobs: Vec<Job>,
-    time: usize,
-    pub wait_times: Vec<usize>,
+    time: Time,
+    pub wait_times: Vec<Time>,
 }
 
 pub trait DirectionStrategy {
