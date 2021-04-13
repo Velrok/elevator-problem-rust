@@ -2,18 +2,13 @@
 mod elevator;
 mod simulations;
 mod strategies;
-use crate::strategies::AlwaysDown;
+use crate::strategies::{AlwaysDown, UpAndDownLoop};
 
 use simulations::ResidentialFlats;
 
-fn main() {
-    println!("The elevator Problem:");
-
-    println!("Simulating a residential flats building.");
-    let mut sim = ResidentialFlats::new(10);
-    sim.enable_debug();
-    let (wait_times, backlog) = sim.run::<AlwaysDown>();
-
+fn print_results(result: (Vec<usize>, usize)) {
+    let (wait_times, backlog) = result;
+    println!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     println!("Wait times: {:?}", wait_times);
 
     println!("Backlog: {:?}", backlog);
@@ -26,5 +21,18 @@ fn main() {
     println!("-------------------------------");
     println!("Wait times score: {:?}", wait_score);
     println!("Backlog penalty: {:?}", backlog_score);
-    println!("-------------------------------");
+    println!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    println!("");
+}
+
+fn main() {
+    println!("The elevator Problem:");
+
+    let steps = 100;
+
+    println!("AlwaysDown (ResidentialFlats)");
+    print_results(ResidentialFlats::new(123123, true).run::<AlwaysDown>(steps));
+
+    println!("UpAndDown (ResidentialFlats)");
+    print_results(ResidentialFlats::new(123123, false).run::<UpAndDownLoop>(steps));
 }

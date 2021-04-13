@@ -34,11 +34,11 @@ struct Job {
 }
 
 pub struct Elevator {
-    min_floor: Floor,
-    max_floor: Floor,
-    current_floor: Floor,
-    direction: Direction,
-    floor_backlog: Vec<Floor>,
+    pub min_floor: Floor,
+    pub max_floor: Floor,
+    pub current_floor: Floor,
+    pub direction: Direction,
+    pub floor_backlog: Vec<Floor>,
     jobs: Vec<Job>,
     time: usize,
     pub wait_times: Vec<usize>,

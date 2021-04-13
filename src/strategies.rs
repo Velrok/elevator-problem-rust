@@ -6,3 +6,18 @@ impl DirectionStrategy for AlwaysDown {
         Direction::Down
     }
 }
+
+pub struct UpAndDownLoop;
+impl DirectionStrategy for UpAndDownLoop {
+    fn new_direction(e: &Elevator) -> Direction {
+        if e.current_floor == e.max_floor {
+            Direction::Down
+        } else {
+            if e.current_floor == e.min_floor {
+                Direction::Up
+            } else {
+                e.direction
+            }
+        }
+    }
+}
