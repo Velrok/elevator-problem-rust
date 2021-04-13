@@ -189,7 +189,7 @@ impl Elevator {
     }
 
     pub fn backlog(&self) -> usize {
-        self.jobs.len()
+        self.jobs.iter().map(|j| self.time - j.start).sum()
     }
 }
 

@@ -21,3 +21,16 @@ impl DirectionStrategy for UpAndDownLoop {
         }
     }
 }
+
+pub struct Random;
+impl DirectionStrategy for Random {
+    fn new_direction(_: &Elevator) -> Direction {
+        use rand::prelude::*;
+
+        if random::<bool>() {
+            Direction::Up
+        } else {
+            Direction::Down
+        }
+    }
+}
