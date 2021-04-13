@@ -32,6 +32,7 @@ impl fmt::Display for Direction {
 struct Job {
     travel_request: TravelRequest,
     start: Time,
+    entered_at: Option<Time>,
 }
 
 pub struct Elevator {
@@ -137,15 +138,16 @@ impl Elevator {
             .collect();
 
         // job enters the elevator
-        for job in &self.jobs {
+        for job in &mut self.jobs {
             if job.travel_request.origin == self.current_floor {
                 self.floor_backlog.push(job.travel_request.destination);
+                job.entered_at = Some(self.time);
             }
         }
 
         // record completed job wait times
         for job in &self.jobs {
-            if job.travel_request.destination == self.current_floor {
+            if job.travel_request.destination == self.current_floor && job.entered_at.is_some() {
                 let wait = self.time - job.start;
                 self.wait_times.push(wait);
             }
@@ -153,7 +155,7 @@ impl Elevator {
 
         // remove completed jobs
         let mut jobs = self.jobs.clone();
-        jobs.retain(|j| j.travel_request.destination != self.current_floor);
+        jobs.retain(|j| j.travel_request.destination != self.current_floor || j.entered_at.is_none());
         self.jobs = jobs;
     }
 
@@ -182,6 +184,7 @@ impl Elevator {
         self.jobs.push(Job {
             travel_request: t,
             start: self.time,
+            entered_at: None,
         });
     }
 
