@@ -15,9 +15,9 @@ elevator should go up or down, whilst minimising some sort of reward function.
 - [x] measure passenger travel time in steps
 - [x] define and print a score
 - [x] run a simulation
-- [ ] generate travel request for residential flats simulation
-- [ ] generate travel request for office simulation
+- [x] generate travel request for residential flats simulation
 - [ ] write random strategy and evaluate for different scenarios
+- [ ] generate travel request for office simulation
 - [ ] write different strategies * x
 - [ ] pick a winning strategy
 

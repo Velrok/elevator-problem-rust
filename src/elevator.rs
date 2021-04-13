@@ -48,6 +48,52 @@ pub trait DirectionStrategy {
     fn new_direction(e: &Elevator) -> Direction;
 }
 
+#[test]
+fn test_elevator() {
+    use crate::strategies::AlwaysDown;
+
+    let mut e = Elevator::new(0, 1, 1);
+    e.add_request(TravelRequest{
+       origin: 1,
+       destination: 0,
+       direction: Direction::Down,
+    });
+    for _ in 0..5 {
+        e.step::<AlwaysDown>();
+    }
+    assert_eq!(0, e.jobs.len());
+    assert_eq!(0, e.floor_backlog.len());
+    assert_eq!(1, e.wait_times.len());
+    assert_eq!(3 , e.wait_times[0]); // 1t = travel time + 1t = enter src + 1t exit dst
+    assert!(4 <= e.time);
+}
+
+#[test]
+fn test_elevator_is_no_teleporter() {
+    use crate::strategies::AlwaysDown;
+
+    let mut e = Elevator::new(0, 1, 0);
+    e.add_request(TravelRequest{
+        origin: 1,
+        destination: 0,
+        direction: Direction::Down,
+    });
+    e.add_request(TravelRequest{
+        origin: 0,
+        destination: 1,
+        direction: Direction::Up,
+    });
+    e.step::<AlwaysDown>();
+    e.step::<AlwaysDown>();
+    e.step::<AlwaysDown>();
+    e.step::<AlwaysDown>();
+
+
+    assert_eq!(0, e.wait_times.len());
+    assert_eq!(2, e.jobs.len());
+    assert_eq!(2, e.floor_backlog.len());
+}
+
 impl Elevator {
     pub fn new(min: usize, max: usize, current: usize) -> Self {
         Elevator {
