@@ -29,7 +29,7 @@ impl fmt::Display for Direction {
 }
 
 #[derive(Copy, Clone)]
-struct Job {
+struct Passenger {
     travel_request: TravelRequest,
     start: Time,
     entered_at: Option<Time>,
@@ -41,7 +41,7 @@ pub struct Elevator {
     pub current_floor: Floor,
     pub direction: Direction,
     pub floor_backlog: Vec<Floor>,
-    jobs: Vec<Job>,
+    jobs: Vec<Passenger>,
     time: Time,
     pub wait_times: Vec<Time>,
 }
@@ -181,7 +181,7 @@ impl Elevator {
 
     pub fn add_request(&mut self, t: TravelRequest) {
         self.floor_backlog.push(t.origin);
-        self.jobs.push(Job {
+        self.jobs.push(Passenger {
             travel_request: t,
             start: self.time,
             entered_at: None,
