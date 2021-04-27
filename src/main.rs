@@ -2,29 +2,8 @@
 mod elevator;
 mod simulations;
 mod strategies;
-use crate::strategies::{AlwaysDown, Random, UpAndDownLoop};
-
+use crate::strategies::{Random, UpAndDownLoop};
 use simulations::ResidentialFlats;
-
-fn print_results(label: &str, result: (Vec<usize>, usize)) {
-    let (wait_times, backlog) = result;
-    println!("{}", label);
-    println!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    println!("Wait times: {:?}", wait_times);
-
-    println!("Backlog: {:?}", backlog);
-    println!("");
-
-    let wait_score = wait_times.iter().map(|&x| x as i32).sum::<i32>();
-    let backlog_score = backlog as i32 * 10;
-
-    println!("Score lower is better: {:?}", wait_score + backlog_score);
-    println!("-------------------------------");
-    println!("Wait times score: {:?}", wait_score);
-    println!("Backlog penalty: {:?}", backlog_score);
-    println!(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    println!("");
-}
 
 #[derive(Debug, Clone, PartialEq)]
 struct Score {
@@ -51,9 +30,9 @@ fn print_progress(scores: Vec<Score>) {
 }
 
 fn render_graph(progress: i32, max: i32) -> String {
-    const BAR : &str = "#######################################";
+    const BAR: &str = "#######################################";
     let bar_width = (progress as f32 / max as f32 * 30.0) as usize;
-    return BAR[0..bar_width].into()
+    return BAR[0..bar_width].into();
 }
 
 fn main() {
@@ -83,13 +62,10 @@ fn main() {
                 wait_score: sim3r.0.iter().map(|&x| x as i32).sum::<i32>(),
                 backlog_score: sim3r.1 as i32,
             },
-        ])
+        ]);
+
+        use std::{thread, time};
+        let wait_ms = time::Duration::from_millis(200);
+        thread::sleep(wait_ms);
     }
-
-    // print_results(ResidentialFlats::<AlwaysDown>::new(seed, false).run(steps));
-    // println!("AlwaysDown (ResidentialFlats)");
-    //
-
-    // println!("UpAndDown (ResidentialFlats)");
-    // print_results(ResidentialFlats::new(seed, false).run::<UpAndDownLoop>(steps));
 }
