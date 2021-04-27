@@ -17,6 +17,7 @@ elevator should go up or down, whilst minimising some sort of reward function.
 - [x] run a simulation
 - [x] generate travel request for residential flats simulation
 - [x] write random strategy and evaluate for different scenarios
+- [ ] add elevator capacity
 - [ ] generate travel request for office simulation
 - [ ] write different strategies * x
 - [ ] pick a winning strategy
