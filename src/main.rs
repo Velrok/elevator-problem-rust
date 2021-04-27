@@ -2,6 +2,7 @@
 mod elevator;
 mod simulations;
 mod strategies;
+mod printer;
 use crate::strategies::{Random, UpAndDownLoop};
 use simulations::ResidentialFlats;
 
@@ -19,20 +20,14 @@ fn print_progress(scores: Vec<Score>) {
     scores.sort_by_key(|s| (s.backlog_score, s.wait_score));
 
     for score in &scores {
-        let backlog_graph = render_graph(score.backlog_score, max_backlog);
-        let wait_graph = render_graph(score.wait_score, max_wait);
+        let backlog_graph = printer::render_graph(score.backlog_score, max_backlog);
+        let wait_graph = printer::render_graph(score.wait_score, max_wait);
         println!(
             "{: <15} B:{: >8} {: <40} W:{: >8} {: <40}",
             score.name, score.backlog_score, backlog_graph, score.wait_score, wait_graph
         )
     }
     println!("");
-}
-
-fn render_graph(progress: i32, max: i32) -> String {
-    const BAR: &str = "#######################################";
-    let bar_width = (progress as f32 / max as f32 * 30.0) as usize;
-    return BAR[0..bar_width].into();
 }
 
 fn main() {
