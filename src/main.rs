@@ -2,7 +2,6 @@
 mod elevator;
 mod simulations;
 mod strategies;
-use crate::elevator::DirectionStrategy;
 use crate::strategies::{AlwaysDown, UpAndDownLoop, Random};
 
 use simulations::ResidentialFlats;
@@ -34,7 +33,7 @@ struct Score {
     backlog_score: i32,
 }
 fn print_progress(scores: Vec<Score>) {
-    const bar : &str = "#######################################";
+    const BAR : &str = "#######################################";
 
     let max_wait = scores.iter().map(|s| s.wait_score).max().unwrap();
     let max_backlog = scores.iter().map(|s| s.backlog_score).max().unwrap();
@@ -46,8 +45,8 @@ fn print_progress(scores: Vec<Score>) {
         let backlog_bar = (score.backlog_score as f32 / max_backlog as f32 * 30.0) as usize;
         let wait_bar = (score.wait_score as f32 / max_wait as f32 * 30.0) as usize;
 
-        let backlog_graph = &bar[0..backlog_bar];
-        let wait_graph = &bar[0..wait_bar];
+        let backlog_graph = &BAR[0..backlog_bar];
+        let wait_graph = &BAR[0..wait_bar];
         println!("{: <15} B:{: >8} {: <40} W:{: >8} {: <40}", score.name, score.backlog_score, backlog_graph, score.wait_score, wait_graph)
     }
     println!("");
@@ -59,12 +58,12 @@ fn main() {
     let steps = 100;
     let seed = 123123;
 
-    let mut sim1 = ResidentialFlats::<AlwaysDown>::new(seed, false);
+    // let mut sim1 = ResidentialFlats::<AlwaysDown>::new(seed, false);
     let mut sim2 = ResidentialFlats::<UpAndDownLoop>::new(seed, false);
     let mut sim3 = ResidentialFlats::<Random>::new(seed, false);
 
     for _ in 0..steps {
-        let sim1r = sim1.run(10);
+        // let sim1r = sim1.run(10);
         let sim2r = sim2.run(10);
         let sim3r = sim3.run(10);
 
