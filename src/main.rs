@@ -2,7 +2,7 @@
 mod elevator;
 mod simulations;
 mod strategies;
-use crate::strategies::{AlwaysDown, UpAndDownLoop, Random};
+use crate::strategies::{AlwaysDown, Random, UpAndDownLoop};
 
 use simulations::ResidentialFlats;
 
@@ -26,14 +26,14 @@ fn print_results(label: &str, result: (Vec<usize>, usize)) {
     println!("");
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 struct Score {
     name: String,
     wait_score: i32,
     backlog_score: i32,
 }
 fn print_progress(scores: Vec<Score>) {
-    const BAR : &str = "#######################################";
+    const BAR: &str = "#######################################";
 
     let max_wait = scores.iter().map(|s| s.wait_score).max().unwrap();
     let max_backlog = scores.iter().map(|s| s.backlog_score).max().unwrap();
@@ -47,7 +47,10 @@ fn print_progress(scores: Vec<Score>) {
 
         let backlog_graph = &BAR[0..backlog_bar];
         let wait_graph = &BAR[0..wait_bar];
-        println!("{: <15} B:{: >8} {: <40} W:{: >8} {: <40}", score.name, score.backlog_score, backlog_graph, score.wait_score, wait_graph)
+        println!(
+            "{: <15} B:{: >8} {: <40} W:{: >8} {: <40}",
+            score.name, score.backlog_score, backlog_graph, score.wait_score, wait_graph
+        )
     }
     println!("");
 }
@@ -69,8 +72,16 @@ fn main() {
 
         print_progress(vec![
             // Score{name: "AlwaysDown".into(), wait_score: sim1r.0.iter().map(|&x| x as i32).sum::<i32>(), backlog_score: sim1r.1 as i32},
-            Score{name: "UpAndDownLoop".into(), wait_score: sim2r.0.iter().map(|&x| x as i32).sum::<i32>(), backlog_score: sim2r.1 as i32},
-            Score{name: "Random".into(), wait_score: sim3r.0.iter().map(|&x| x as i32).sum::<i32>(), backlog_score: sim3r.1 as i32},
+            Score {
+                name: "UpAndDownLoop".into(),
+                wait_score: sim2r.0.iter().map(|&x| x as i32).sum::<i32>(),
+                backlog_score: sim2r.1 as i32,
+            },
+            Score {
+                name: "Random".into(),
+                wait_score: sim3r.0.iter().map(|&x| x as i32).sum::<i32>(),
+                backlog_score: sim3r.1 as i32,
+            },
         ])
     }
 
