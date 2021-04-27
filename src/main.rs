@@ -65,7 +65,7 @@ fn main() {
         ]);
 
         use std::{thread, time};
-        let wait_ms = time::Duration::from_millis(200);
+        let wait_ms = time::Duration::from_millis(100);
         thread::sleep(wait_ms);
     }
 }
