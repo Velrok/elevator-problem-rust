@@ -26,8 +26,6 @@ elevator should go up or down, whilst minimising some sort of reward function.
 ## Idea Simulation Main Loop
 
 ```rust
-
-
 // Program/Strategy
 
 // Elevator #1
