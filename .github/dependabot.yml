@@ -1,5 +1,5 @@
-# dependabot.yml file with
-# customized schedule for version updates
+# dependabot.yml file with customized schedule for version updates
+# see https://docs.github.com/en/code-security/supply-chain-security/configuration-options-for-dependency-updates
 
 version: 2
 updates:
